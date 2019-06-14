@@ -15,7 +15,8 @@
     [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
-    [buddy.auth.backends.session :refer [session-backend]])
+    [buddy.auth.backends.session :refer [session-backend]]
+    [ring.util.response :refer [redirect]])
   (:import 
            ))
 
@@ -46,9 +47,13 @@
       ((if (:websocket? request) handler wrapped) request))))
 
 (defn on-error [request response]
-  (error-page
-    {:status 403
-     :title (str "Access to " (:uri request) " is not authorized")}))
+  ;; Original on-error simply states the error
+  ;; (error-page
+  ;;   {:status 403
+  ;;    :title (str "Access to " (:uri request) " is not authorized")})
+
+  ;; Next verion redirects to /login with a next parameter with the requested page
+  (redirect (str "/login" "?next=" (:uri request))))
 
 (defn wrap-restricted [handler]
   (restrict handler {:handler authenticated?
