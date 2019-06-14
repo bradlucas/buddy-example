@@ -3,6 +3,7 @@
     [buddy-example.middleware :as middleware]
     [buddy-example.layout :refer [error-page]]
     [buddy-example.routes.home :refer [home-routes]]
+    [buddy-example.routes.auth :refer [auth-routes]]
     [buddy-example.routes.restricted :refer [restricted-routes]]
     [reitit.ring :as ring]
     [ring.middleware.content-type :refer [wrap-content-type]]
@@ -20,6 +21,7 @@
     (ring/ring-handler
       (ring/router
         [(home-routes)
+         (auth-routes)
          (restricted-routes)])
       (ring/routes
         (ring/create-resource-handler
